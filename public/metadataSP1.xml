@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<EntityDescriptor
+    xmlns="urn:oasis:names:tc:SAML:2.0:metadata" 
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+    entityID="http://app.one.com/shibboleth"
+	validUntil="2015-01-01T00:00:00Z">
+
+    <!-- urn:oasis:names:tc:SAML:1.1:protocol -->
+	<SPSSODescriptor	protocolSupportEnumeration="urn:oasis:names:tc:SAML:2.0:protocol">
+
+		<KeyDescriptor>
+			<ds:KeyInfo xmlns:ds="http://www.w3.org/2000/09/xmldsig#">
+				<ds:X509Data>
+					<ds:X509Certificate>MIIB+jCCAWOgAwIBAgIJANJCfvj7xyyBMA0GCSqGSIb3DQEBBQUAMBYxFDASBgNV
+BAMMC2FwcC5vbmUuY29tMB4XDTEyMDQxMzE3NTkwMloXDTIyMDQxMTE3NTkwMlow
+FjEUMBIGA1UEAwwLYXBwLm9uZS5jb20wgZ8wDQYJKoZIhvcNAQEBBQADgY0AMIGJ
+AoGBAKlvLThMgBYdEbl9Cjbov+hx2LzNT8yo/TX/I6M/keDOdReibXyRdJQFLRIU
+1Fgyg4aoSVG0XRB7e4qmci1SPRj92NZvJfgFtwWN0UXBiU4VRVRGb1YHMElThN8P
+R/PuODwR8MnyB4uVbht3P+adFTx1DVIMzydmJyvebTXlxEbTAgMBAAGjUDBOMB0G
+A1UdDgQWBBQt+qT7hEmxVOLyZiH6fCiKtlDwTzAfBgNVHSMEGDAWgBQt+qT7hEmx
+VOLyZiH6fCiKtlDwTzAMBgNVHRMEBTADAQH/MA0GCSqGSIb3DQEBBQUAA4GBACEJ
+84us3IsfwM96RM5avFn3g6pv7T8vCk8ngVvq+ajBP1R8lpwQR5aMv1iHbjOySONK
+yiQBqAr7Ebh48lH1ewtFI5haYJqbNm/1mXaGnc0QKBWITViGagmQ09z4h97WqwCz
+r0SXfSutuHD78djIpwFyBpamIvBHdhqp+F/TwJnf</ds:X509Certificate>
+				</ds:X509Data>
+			</ds:KeyInfo>
+		</KeyDescriptor>
+
+		<!-- 
+		<SingleLogoutService
+			Location="https://10.0.150.96:9000/authn/SLO/SOAP"
+			Binding="urn:oasis:names:tc:SAML:2.0:bindings:SOAP" />
+		<SingleLogoutService
+			Location="https://10.0.150.96:9000/authn/SLO/Redirect"
+			Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect" />
+		<SingleLogoutService
+			Location="https://10.0.150.96:9000/authn/SLO/POST"
+			Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST" />
+		<SingleLogoutService
+			Location="10.0.150.96:9000/authn/SLO/Artifact"
+			Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Artifact" />
+         -->
+         
+        <AssertionConsumerService
+            Location="http://10.0.150.96:9000/authn/SAML2/POST"
+            index="1" Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST" />
+		<!-- 
+		<AssertionConsumerService
+			Location="https://10.0.150.96:9000/authn/SAML2/POST-SimpleSign"
+			index="2" Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST-SimpleSign" />
+		<AssertionConsumerService
+			Location="https://10.0.150.96:9000/authn/SAML2/Artifact"
+			index="3" Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Artifact" />
+		<AssertionConsumerService
+			Location="https://10.0.150.96:9000/authn/SAML2/ECP"
+			index="4" Binding="urn:oasis:names:tc:SAML:2.0:bindings:PAOS" />
+		<AssertionConsumerService
+			Location="https://10.0.150.96:9000/authn/SAML/POST"
+			index="5" Binding="urn:oasis:names:tc:SAML:1.0:profiles:browser-post" />
+		<AssertionConsumerService
+			Location="https://10.0.150.96:9000/authn/SAML/Artifact"
+			index="6" Binding="urn:oasis:names:tc:SAML:1.0:profiles:artifact-01" />
+        -->
+        
+		<AttributeConsumingService index="1">
+			<ServiceName xml:lang="en">Sample Service One</ServiceName>
+			<ServiceDescription xml:lang="en">An example service (one)</ServiceDescription>
+
+            <RequestedAttribute FriendlyName="username" Name="urn:oid:2.5.4.41" />
+            <RequestedAttribute FriendlyName="email" Name="urn:oid:1.2.840.113549.1.9.1" />
+			<!-- 
+			<RequestedAttribute FriendlyName="uid" Name="urn:oid:0.9.2342.19200300.100.1.1" />
+            <RequestedAttribute FriendlyName="username" Name="urn:oid:2.5.4.41" />
+			<RequestedAttribute FriendlyName="email" Name="urn:oid:1.2.840.113549.1.9.1" />
+			<RequestedAttribute FriendlyName="homePhone" Name="urn:oid:0.9.2342.19200300.100.1.20" />
+			 -->
+		</AttributeConsumingService>
+
+	</SPSSODescriptor>
+
+	<Organization>
+		<OrganizationName xml:lang="en">The Orgnization One Ltd.</OrganizationName>
+		<OrganizationDisplayName xml:lang="en">Organization One</OrganizationDisplayName>
+		<OrganizationURL xml:lang="en">http://10.0.150.96:9000/</OrganizationURL>
+	</Organization>
+
+</EntityDescriptor>

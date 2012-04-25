@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<EntityDescriptor xmlns="urn:oasis:names:tc:SAML:2.0:metadata"
+	entityID="https://torvm-core12.sigmasys.net:8080/idp/shibboleth"
+	xmlns:ds="http://www.w3.org/2000/09/xmldsig#" xmlns:shibmd="urn:mace:shibboleth:metadata:1.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<IDPSSODescriptor
+		protocolSupportEnumeration="urn:mace:shibboleth:1.0 urn:oasis:names:tc:SAML:1.1:protocol urn:oasis:names:tc:SAML:2.0:protocol">
+		<Extensions>
+			<shibmd:Scope regexp="false">sigmasys.net:8080</shibmd:Scope>
+		</Extensions>
+		<KeyDescriptor>
+			<ds:KeyInfo>
+				<ds:X509Data>
+					<ds:X509Certificate>MIIDZjCCAk6gAwIBAgIVAK+go3US2qJ763GK9oUF+o27MzAUMA0GCSqGSIb3DQEB
+						BQUAMCkxJzAlBgNVBAMTHnRvcnZtLWNvcmUxMi5zaWdtYXN5cy5uZXQ6ODA4MDAe
+						Fw0xMjA0MTMxNTM5NDZaFw0zMjA0MTMxNTM5NDZaMCkxJzAlBgNVBAMTHnRvcnZt
+						LWNvcmUxMi5zaWdtYXN5cy5uZXQ6ODA4MDCCASIwDQYJKoZIhvcNAQEBBQADggEP
+						ADCCAQoCggEBAJFKFR9a8w6WCRfXb14ktqfrasT4OUMG7HqqaU5eu0uaOR/oGzUE
+						bj20+XQJNKoBQrnqOw//4x+huqKGb2gDS7BrELfmqlj9LZy8c/OBj8Qc6FsqQqhH
+						TfccH7BY4oFlhgUnMK2u31MBQjv2wXWWPfYZRZOCPItl9CIFDKxxaBheD7SQIYHD
+						Xvd0y5vu/i5QUrLXBmmVZKB+BSzCJ2LZ32P5CZbahVrQDMvgyBXaCSqjt0NZTYqd
+						CldtcLxD1lE7rw05OMkOt80YeCDBJbrZ790WxYHj6eHLxLp6ErwG2A5hPhRIm2HY
+						fnaYysNppMzm5cTGEJMGPrKkS8voxSXsrs0CAwEAAaOBhDCBgTBgBgNVHREEWTBX
+						gh50b3J2bS1jb3JlMTIuc2lnbWFzeXMubmV0OjgwODCGNWh0dHBzOi8vdG9ydm0t
+						Y29yZTEyLnNpZ21hc3lzLm5ldDo4MDgwL2lkcC9zaGliYm9sZXRoMB0GA1UdDgQW
+						BBSVcLjllJ9iClCqy2AoESkYjYoIlzANBgkqhkiG9w0BAQUFAAOCAQEANAdnDX0Q
+						uGr2e5pryof2W3EiqDpKC6Sk+f8aN1ENtSizdLZJlnjspk5qzGn54kNcV5eyxZ6e
+						ceH4mqSVWGO+P+ihd3OPADG22GAJc8+MjF+BoykwV1IvwrDaCn7niZHEQa75Q++A
+						bns2scQmPKydyzR7z9gvud42t/vE2wKfLO4NjNSO6rVRiEtfoy4stOQS34bnxn0q
+						LAPPyTIShgE6fGt76T2b3lEkv9uZetvpEiLKx1d3dWuRmiCkdzdZKavjEMKN548n
+						RU+wcBrklhDAFmRg4YguTC0eir8LFHiHgnEH8/Gq4PRrAg9NFfbTidTcrkTvwxuh
+						XqDs6+91GUm1Fg==
+					</ds:X509Certificate>
+				</ds:X509Data>
+			</ds:KeyInfo>
+		</KeyDescriptor>
+		<ArtifactResolutionService
+			Binding="urn:oasis:names:tc:SAML:1.0:bindings:SOAP-binding"
+			Location="https://torvm-core12.sigmasys.net:8080:8443/idp/profile/SAML1/SOAP/ArtifactResolution"
+			index="1" />
+		<ArtifactResolutionService Binding="urn:oasis:names:tc:SAML:2.0:bindings:SOAP"
+			Location="https://torvm-core12.sigmasys.net:8080:8443/idp/profile/SAML2/SOAP/ArtifactResolution"
+			index="2" />
+		<NameIDFormat>urn:mace:shibboleth:1.0:nameIdentifier</NameIDFormat>
+		<NameIDFormat>urn:oasis:names:tc:SAML:2.0:nameid-format:transient
+		</NameIDFormat>
+		<SingleSignOnService Binding="urn:mace:shibboleth:1.0:profiles:AuthnRequest"
+			Location="https://torvm-core12.sigmasys.net:8080/idp/profile/Shibboleth/SSO" />
+		<SingleSignOnService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST"
+			Location="https://torvm-core12.sigmasys.net:8080/idp/profile/SAML2/POST/SSO" />
+		<SingleSignOnService
+			Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST-SimpleSign"
+			Location="https://torvm-core12.sigmasys.net:8080/idp/profile/SAML2/POST-SimpleSign/SSO" />
+		<SingleSignOnService
+			Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect"
+			Location="https://torvm-core12.sigmasys.net:8080/idp/profile/SAML2/Redirect/SSO" />
+	</IDPSSODescriptor>
+	<AttributeAuthorityDescriptor
+		protocolSupportEnumeration="urn:oasis:names:tc:SAML:1.1:protocol urn:oasis:names:tc:SAML:2.0:protocol">
+		<Extensions>
+			<shibmd:Scope regexp="false">sigmasys.net:8080</shibmd:Scope>
+		</Extensions>
+		<KeyDescriptor>
+			<ds:KeyInfo>
+				<ds:X509Data>
+					<ds:X509Certificate>MIIDZjCCAk6gAwIBAgIVAK+go3US2qJ763GK9oUF+o27MzAUMA0GCSqGSIb3DQEB
+						BQUAMCkxJzAlBgNVBAMTHnRvcnZtLWNvcmUxMi5zaWdtYXN5cy5uZXQ6ODA4MDAe
+						Fw0xMjA0MTMxNTM5NDZaFw0zMjA0MTMxNTM5NDZaMCkxJzAlBgNVBAMTHnRvcnZt
+						LWNvcmUxMi5zaWdtYXN5cy5uZXQ6ODA4MDCCASIwDQYJKoZIhvcNAQEBBQADggEP
+						ADCCAQoCggEBAJFKFR9a8w6WCRfXb14ktqfrasT4OUMG7HqqaU5eu0uaOR/oGzUE
+						bj20+XQJNKoBQrnqOw//4x+huqKGb2gDS7BrELfmqlj9LZy8c/OBj8Qc6FsqQqhH
+						TfccH7BY4oFlhgUnMK2u31MBQjv2wXWWPfYZRZOCPItl9CIFDKxxaBheD7SQIYHD
+						Xvd0y5vu/i5QUrLXBmmVZKB+BSzCJ2LZ32P5CZbahVrQDMvgyBXaCSqjt0NZTYqd
+						CldtcLxD1lE7rw05OMkOt80YeCDBJbrZ790WxYHj6eHLxLp6ErwG2A5hPhRIm2HY
+						fnaYysNppMzm5cTGEJMGPrKkS8voxSXsrs0CAwEAAaOBhDCBgTBgBgNVHREEWTBX
+						gh50b3J2bS1jb3JlMTIuc2lnbWFzeXMubmV0OjgwODCGNWh0dHBzOi8vdG9ydm0t
+						Y29yZTEyLnNpZ21hc3lzLm5ldDo4MDgwL2lkcC9zaGliYm9sZXRoMB0GA1UdDgQW
+						BBSVcLjllJ9iClCqy2AoESkYjYoIlzANBgkqhkiG9w0BAQUFAAOCAQEANAdnDX0Q
+						uGr2e5pryof2W3EiqDpKC6Sk+f8aN1ENtSizdLZJlnjspk5qzGn54kNcV5eyxZ6e
+						ceH4mqSVWGO+P+ihd3OPADG22GAJc8+MjF+BoykwV1IvwrDaCn7niZHEQa75Q++A
+						bns2scQmPKydyzR7z9gvud42t/vE2wKfLO4NjNSO6rVRiEtfoy4stOQS34bnxn0q
+						LAPPyTIShgE6fGt76T2b3lEkv9uZetvpEiLKx1d3dWuRmiCkdzdZKavjEMKN548n
+						RU+wcBrklhDAFmRg4YguTC0eir8LFHiHgnEH8/Gq4PRrAg9NFfbTidTcrkTvwxuh
+						XqDs6+91GUm1Fg==
+					</ds:X509Certificate>
+				</ds:X509Data>
+			</ds:KeyInfo>
+		</KeyDescriptor>
+		<AttributeService Binding="urn:oasis:names:tc:SAML:1.0:bindings:SOAP-binding"
+			Location="https://torvm-core12.sigmasys.net:8080:8443/idp/profile/SAML1/SOAP/AttributeQuery" />
+		<AttributeService Binding="urn:oasis:names:tc:SAML:2.0:bindings:SOAP"
+			Location="https://torvm-core12.sigmasys.net:8080:8443/idp/profile/SAML2/SOAP/AttributeQuery" />
+		<NameIDFormat>urn:mace:shibboleth:1.0:nameIdentifier</NameIDFormat>
+		<NameIDFormat>urn:oasis:names:tc:SAML:2.0:nameid-format:transient
+		</NameIDFormat>
+	</AttributeAuthorityDescriptor>
+</EntityDescriptor>

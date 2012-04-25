@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+
+<html>
+    <head>
+        <title>#{get 'title' /}</title>
+        <meta charset="${_response_encoding}">
+		#{bootstrap /}
+		<link rel="stylesheet" media="screen" href="@{'/public/stylesheets/main.css'}">
+        <link rel="shortcut icon" type="image/png" href="@{'/public/images/favicon.ico'}">
+    </head>
+    <body>
+		#{navbar /}
+        #{doLayout /}
+		
+		<hr>
+		<div class="span5 alert alert-info">
+		<strong>SessionID:</strong> ${session.getId()} 
+		</div>
+
+    </body>
+
+</html>

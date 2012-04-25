@@ -1,0 +1,13 @@
+#{extends 'main.html' /}
+#{set title: messages.get('appName') /}
+
+<form method="post" action="http://torvm-core12.sigmasys.net:8080/idp/profile/SAML2/POST/SSO">
+   <input type="hidden" name="SAMLRequest" value="${flash.SAMLRequest}" />
+   <input type="hidden" name="RelayState" value="${flash.RelayState}" />
+   <input type="submit" value="Submit Authentication Request" />
+</form>
+
+<div class="span5 alert alert-info">
+<strong>NOTE:</strong><br>This page would normally be hidden by automatically submitting the form. 
+I am only showing it to illustrate the process. 
+</div>

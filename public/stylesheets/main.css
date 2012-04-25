@@ -1,0 +1,31 @@
+.siteLogo {
+	float:left; 
+	height:40px; 
+	width:40px; 
+	margin:0px; 
+	padding:0px;
+	border: 0;
+}
+
+/****************************
+ overwrite/extend bootstrap 
+ ****************************/
+.breadcrumb {
+	background-image: -moz-linear-gradient(top, whiteSmoke, lightGray);
+	background-image: -ms-linear-gradient(top, whiteSmoke, lightGray);
+	background-image: -webkit-gradient(linear, 0 0, 0 100%, from(whiteSmoke), to(lightGray));
+	background-image: -webkit-linear-gradient(top, whiteSmoke, lightGray);
+	background-image: -o-linear-gradient(top, whiteSmoke, lightGray);
+	background-image: linear-gradient(top, whiteSmoke, lightGray);	
+}
+.breadcrumb .divider {
+    background-image: url('/public/images/breadcrumb.png');
+    background-repeat: no-repeat;
+    background-position: right;
+    padding-right: 20px;
+    color: #343434;
+}
+
+.form-horizontal .control-group {
+    margin-bottom: 5px;
+}

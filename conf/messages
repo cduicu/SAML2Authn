@@ -1,0 +1,8 @@
+# You can specialize this file for each language.
+# For example, for French create a messages.fr file
+#
+
+appName=SSO1
+notSignedIn=Not signed in!
+signedIn=Signed in as %s
+signIn=Sign In
