@@ -50,6 +50,7 @@ import org.opensaml.common.SAMLObjectBuilder;
 import org.opensaml.common.SAMLVersion;
 import org.opensaml.common.binding.BasicSAMLMessageContext;
 import org.opensaml.common.binding.SAMLMessageContext;
+import org.opensaml.common.xml.SAMLConstants;
 import org.opensaml.saml2.binding.decoding.HTTPSOAP11Decoder;
 import org.opensaml.saml2.binding.encoding.HTTPSOAP11Encoder;
 import org.opensaml.saml2.core.impl.AttributeQueryBuilder;
@@ -85,6 +86,7 @@ import org.opensaml.ws.transport.OutputStreamOutTransportAdapter;
 import org.opensaml.ws.transport.http.HTTPOutTransport;
 import org.opensaml.xml.ConfigurationException;
 import org.opensaml.xml.XMLObject;
+import org.opensaml.xml.XMLObjectBuilder;
 import org.opensaml.xml.XMLObjectBuilderFactory;
 import org.opensaml.xml.encryption.EncryptedKeyResolver;
 import org.opensaml.xml.encryption.InlineEncryptedKeyResolver;
@@ -122,12 +124,12 @@ import play.Logger;
  */
 public class SAMLUtil {
 
-    private static SAMLUtil instance;
-    private ParserPool parserPool;
+    private static SAMLUtil         instance;
+    private ParserPool              parserPool;
     private XMLObjectBuilderFactory builderFactory;
-    private MarshallerFactory marshallerFactory;
-    private UnmarshallerFactory unmarshallerFactory;
-    public static final String SOAP_URL =
+    private MarshallerFactory       marshallerFactory;
+    private UnmarshallerFactory     unmarshallerFactory;
+    public static final String      SOAP_URL =
             "http://torvm-core12.sigmasys.net:8080/idp/profile/SAML2/SOAP/AttributeQuery";
 
     private SAMLUtil() {
@@ -155,44 +157,39 @@ public class SAMLUtil {
         unmarshallerFactory = Configuration.getUnmarshallerFactory();
     }
 
-    public String buildAuthnRequest(String issuerUrl, String assertionConsumerServiceUrl) {
-        SAMLObjectBuilder authnRequestBuilder = (SAMLObjectBuilder) builderFactory
-                .getBuilder(AuthnRequest.DEFAULT_ELEMENT_NAME);
-        // Create an issuer Object
-        IssuerBuilder issuerBuilder = new IssuerBuilder();
-        Issuer issuer = issuerBuilder.buildObject("urn:oasis:names:tc:SAML:2.0:assertion", "Issuer", "samlp");
+    public String buildAuthnRequest(String issuerUrl, String assertionConsumerServiceUrl, boolean forceAuthn) {
+        XMLObjectBuilder issuerBuilder = builderFactory.getBuilder(Issuer.DEFAULT_ELEMENT_NAME);
+        Issuer issuer = (Issuer) issuerBuilder.buildObject(Issuer.DEFAULT_ELEMENT_NAME);
         issuer.setValue(issuerUrl);
 
         // Create NameIDPolicy
-        NameIDPolicyBuilder nameIdPolicyBuilder = new NameIDPolicyBuilder();
-        NameIDPolicy nameIdPolicy = nameIdPolicyBuilder.buildObject();
-        // nameIdPolicy.setSchemaLocation("urn:oasis:names:tc:SAML:2.0:protocol");
-        nameIdPolicy.setFormat(NameID.PERSISTENT);
+        XMLObjectBuilder nameIdPolicyBuilder = builderFactory.getBuilder(NameIDPolicy.DEFAULT_ELEMENT_NAME);
+        NameIDPolicy nameIdPolicy = (NameIDPolicy) nameIdPolicyBuilder.buildObject(NameIDPolicy.DEFAULT_ELEMENT_NAME);
+        nameIdPolicy.setFormat(NameID.TRANSIENT);
         nameIdPolicy.setSPNameQualifier(issuerUrl);
         nameIdPolicy.setAllowCreate(true);
 
         // Create AuthnContextClassRef
-        AuthnContextClassRefBuilder authnContextClassRefBuilder = new AuthnContextClassRefBuilder();
-        AuthnContextClassRef authnContextClassRef = authnContextClassRefBuilder.buildObject(
-                "urn:oasis:names:tc:SAML:2.0:assertion", "AuthnContextClassRef", "saml");
+        XMLObjectBuilder authnContextClassRefBuilder = builderFactory
+                .getBuilder(AuthnContextClassRef.DEFAULT_ELEMENT_NAME);
+        AuthnContextClassRef authnContextClassRef = (AuthnContextClassRef) authnContextClassRefBuilder
+                .buildObject(AuthnContextClassRef.DEFAULT_ELEMENT_NAME);
         authnContextClassRef.setAuthnContextClassRef(AuthnContext.PPT_AUTHN_CTX);
 
         // Create RequestedAuthnContext
-        RequestedAuthnContextBuilder requestedAuthnContextBuilder = new RequestedAuthnContextBuilder();
-        RequestedAuthnContext requestedAuthnContext = requestedAuthnContextBuilder.buildObject();
+        XMLObjectBuilder requestedAuthnContextBuilder = builderFactory
+                .getBuilder(RequestedAuthnContext.DEFAULT_ELEMENT_NAME);
+        RequestedAuthnContext requestedAuthnContext = (RequestedAuthnContext) requestedAuthnContextBuilder
+                .buildObject(RequestedAuthnContext.DEFAULT_ELEMENT_NAME);
         requestedAuthnContext.setComparison(AuthnContextComparisonTypeEnumeration.EXACT);
         requestedAuthnContext.getAuthnContextClassRefs().add(authnContextClassRef);
 
-        DateTime issueInstant = new DateTime();
-        // AuthnRequestBuilder authRequestBuilder = new AuthnRequestBuilder();
-        // AuthnRequest authRequest =
-        // authRequestBuilder.buildObject("urn:oasis:names:tc:SAML:2.0:protocol",
-        // "AuthnRequest", "samlp");
-        AuthnRequest authRequest = (AuthnRequest) authnRequestBuilder.buildObject();
-        authRequest.setForceAuthn(false);
+        XMLObjectBuilder authnRequestBuilder = builderFactory.getBuilder(AuthnRequest.DEFAULT_ELEMENT_NAME);
+        AuthnRequest authRequest = (AuthnRequest) authnRequestBuilder.buildObject(AuthnRequest.DEFAULT_ELEMENT_NAME);
+        authRequest.setForceAuthn(forceAuthn);
         authRequest.setIsPassive(false);
-        authRequest.setIssueInstant(issueInstant);
-        authRequest.setProtocolBinding("urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST");
+        authRequest.setIssueInstant(new DateTime());
+        authRequest.setProtocolBinding(SAMLConstants.SAML2_POST_BINDING_URI);
         authRequest.setAssertionConsumerServiceURL(assertionConsumerServiceUrl);
         authRequest.setIssuer(issuer);
         authRequest.setNameIDPolicy(nameIdPolicy);
@@ -240,11 +237,11 @@ public class SAMLUtil {
         try {
             byte[] decodedBytes = Base64.decode(samlResponse);
             ByteArrayInputStream bytesIn = new ByteArrayInputStream(decodedBytes);
-            //InflaterInputStream inflater = new InflaterInputStream(bytesIn, new Inflater());
+            // InflaterInputStream inflater = new InflaterInputStream(bytesIn, new Inflater());
             saveToFile("AuthnResponse.xml", decodedBytes);
             Document messageDoc = parserPool.parse(bytesIn);
             Element messageElem = messageDoc.getDocumentElement();
-            //Logger.info("DOM was:\n{}", XMLHelper.nodeToString(messageElem));
+            // Logger.info("DOM was:\n{}", XMLHelper.nodeToString(messageElem));
             Unmarshaller unmarshaller = unmarshallerFactory.getUnmarshaller(messageElem);
             if (unmarshaller == null) {
                 Logger.info("Unable to unmarshall message, no unmarshaller registered for message element "
@@ -281,11 +278,12 @@ public class SAMLUtil {
             inputStreamPrivateKey.read(encodedPrivateKey);
             inputStreamPrivateKey.close();
             PKCS8EncodedKeySpec privateKeySpec = new PKCS8EncodedKeySpec(encodedPrivateKey);
-            RSAPrivateKey privateKey = (RSAPrivateKey) KeyFactory.getInstance("RSA").generatePrivate(privateKeySpec);
+            RSAPrivateKey privateKey = (RSAPrivateKey) KeyFactory.getInstance("RSA").generatePrivate(
+                    privateKeySpec);
             // read the certificate
             InputStream inStream = new FileInputStream(Application.PEM_FILE);
             CertificateFactory cf = CertificateFactory.getInstance("X.509");
-            X509Certificate cert = (X509Certificate)cf.generateCertificate(inStream);
+            X509Certificate cert = (X509Certificate) cf.generateCertificate(inStream);
             // create credential
             credential = new BasicX509Credential();
             credential.setEntityCertificate(cert);
@@ -345,24 +343,6 @@ public class SAMLUtil {
         query.setIssuer(issuer);
         query.setSubject(subject);
         query.setVersion(SAMLVersion.VERSION_20);
-
-        // Apparently I should not request specific attributes ... ???
-//        AttributeBuilder attrBuilder = new AttributeBuilder();
-//        Attribute attr = attrBuilder.buildObject();
-//        attr.setFriendlyName("uid");
-//        attr.setNameFormat(NameID.TRANSIENT);
-//        query.getAttributes().add(attr);
-//
-//        attr = attrBuilder.buildObject();
-//        attr.setFriendlyName("homePhone");
-//        attr.setNameFormat(NameID.TRANSIENT);
-//        query.getAttributes().add(attr);
-//
-//        attr = attrBuilder.buildObject();
-//        attr.setFriendlyName("email");
-//        attr.setNameFormat(NameID.PERSISTENT);
-//        query.getAttributes().add(attr);
-
         return query;
     }
 
@@ -462,8 +442,8 @@ public class SAMLUtil {
 
     private void signRequest(SignableXMLObject obj) {
         Credential credential = getCredential();
-        Signature signature = (Signature) Configuration.getBuilderFactory().getBuilder(Signature.DEFAULT_ELEMENT_NAME)
-                .buildObject(Signature.DEFAULT_ELEMENT_NAME);
+        Signature signature = (Signature) Configuration.getBuilderFactory()
+                .getBuilder(Signature.DEFAULT_ELEMENT_NAME).buildObject(Signature.DEFAULT_ELEMENT_NAME);
         signature.setSigningCredential(credential);
 
         SecurityConfiguration secConfig = Configuration.getGlobalSecurityConfiguration();
@@ -478,11 +458,10 @@ public class SAMLUtil {
     }
 
     public void logAttributes(List<Attribute> attrs) {
-        for(Attribute attr : attrs) {
-            String s ="Attribute name=" + attr.getName() +
-                    "; friendlyName=" + attr.getFriendlyName() +
-                    "; nameFormat=" + attr.getNameFormat() +
-                    "; values=" + attr.getAttributeValues().size() + " [";
+        for (Attribute attr : attrs) {
+            String s = "Attribute name=" + attr.getName() + "; friendlyName=" + attr.getFriendlyName()
+                    + "; nameFormat=" + attr.getNameFormat() + "; values=" + attr.getAttributeValues().size()
+                    + " [";
             for (XMLObject val : attr.getAttributeValues()) {
                 s += "{qname:" + val.getElementQName() + ", qVal:" + val.getDOM().getNodeValue() + "}";
             }
@@ -510,7 +489,8 @@ public class SAMLUtil {
         Logger.info("Found " + attrs.size() + " attributes in the AuthnResponse");
 
         for (Attribute attr : attrs) {
-            attributes.put(attr.getFriendlyName(), attr.getAttributeValues().get(0).getDOM().getTextContent());
+            attributes
+                    .put(attr.getFriendlyName(), attr.getAttributeValues().get(0).getDOM().getTextContent());
         }
         if (attributes.containsKey(attrName)) {
             return attributes;
@@ -535,30 +515,32 @@ public class SAMLUtil {
         }
 
         for (Attribute attr : attrs) {
-            attributes.put(attr.getFriendlyName(), attr.getAttributeValues().get(0).getDOM().getTextContent());
+            attributes
+                    .put(attr.getFriendlyName(), attr.getAttributeValues().get(0).getDOM().getTextContent());
         }
         return attributes;
     }
 
-//  private Credential getCredential(String fileName, String password, String certificateAliasName) {
-//  try {
-//      KeyStore ks = KeyStore.getInstance(KeyStore.getDefaultType());
-//      FileInputStream fis = new FileInputStream(fileName);
-//      ks.load(fis, password.toCharArray());
-//      fis.close();
-//      KeyStore.PrivateKeyEntry pkEntry = (KeyStore.PrivateKeyEntry) ks.getEntry(
-//              certificateAliasName, new KeyStore.PasswordProtection(password.toCharArray()));
-//      PrivateKey pk = pkEntry.getPrivateKey();
-//      X509Certificate certificate = (X509Certificate) pkEntry.getCertificate();
-//      BasicX509Credential credential = new BasicX509Credential();
-//      credential.setEntityCertificate(certificate);
-//      credential.setPrivateKey(pk);
-//      return credential;
-//  } catch (Exception e) {
-//      Logger.info(e, "Failed getting the credential from KeyStore: " + fileName);
-//  }
-//  return null;
-//}
+    // private Credential getCredential(String fileName, String password, String
+    // certificateAliasName) {
+    // try {
+    // KeyStore ks = KeyStore.getInstance(KeyStore.getDefaultType());
+    // FileInputStream fis = new FileInputStream(fileName);
+    // ks.load(fis, password.toCharArray());
+    // fis.close();
+    // KeyStore.PrivateKeyEntry pkEntry = (KeyStore.PrivateKeyEntry) ks.getEntry(
+    // certificateAliasName, new KeyStore.PasswordProtection(password.toCharArray()));
+    // PrivateKey pk = pkEntry.getPrivateKey();
+    // X509Certificate certificate = (X509Certificate) pkEntry.getCertificate();
+    // BasicX509Credential credential = new BasicX509Credential();
+    // credential.setEntityCertificate(certificate);
+    // credential.setPrivateKey(pk);
+    // return credential;
+    // } catch (Exception e) {
+    // Logger.info(e, "Failed getting the credential from KeyStore: " + fileName);
+    // }
+    // return null;
+    // }
 
     public static void main(String[] args) {
         SAMLUtil u = SAMLUtil.getInstance();

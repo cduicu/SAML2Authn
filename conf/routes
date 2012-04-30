@@ -11,10 +11,12 @@ GET     /favicon.ico                            404
 # Map static resources from the /app/public folder to the /public path
 GET     /public/                                staticDir:public
 
-GET     /authn/SAML2/POST                       Application.authnResponse
-POST    /authn/SAML2/POST                       Application.authnResponse
+GET     /logout                                 Secure.logout
 
-GET     /logout                                 Application.logout
+GET     /authn/SAML2/POST                       SecureWithSAML2.authnResponse
+POST    /authn/SAML2/POST                       SecureWithSAML2.authnResponse
+
+GET     /protected                              AppController.myResource
 
 # Catch all
 *       /{controller}/{action}                  {controller}.{action}

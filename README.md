@@ -7,15 +7,15 @@ like the host, port, certificate, key, metadata.
 
 Frameworks and 3rd Party Libraries
 ----------------------------------
-Play! 1.2.4
-Bootstrap
-MySQL 5.5 Database (to store the users and their attributes)
-Apache Commons
-tagish JAAS
-OpenSAML Stack:
-- opensaml-2.5.3.jar
-- openws-1.4.4.jar
-- xmltooling-1.3.4.jar
+- Play! 1.2.4
+- Bootstrap
+- MySQL 5.5 Database (to store the users and their attributes)
+- Apache Commons
+- tagish JAAS
+- OpenSAML Stack:
+    - opensaml-2.5.3.jar
+    - openws-1.4.4.jar
+    - xmltooling-1.3.4.jar
 
 Installation and Usage
 ----------------------
@@ -29,6 +29,7 @@ this would be required.
    Shibboleth IdP requires a Servlet container. In my tests I used Tomcat 6 for simplicity.
 2. Configure Shibboleth Idp. (there are sample files in /setup to help with this task)
 3. Install and configure users database (there is a sample SQL file in /setup/sso.sql to help this task).
+4. Configure the application
 
 Shibboleth IdP Configuration
 ----------------------------
@@ -60,7 +61,7 @@ In what follows, the values between "[" and "]" must be configured as per your e
     
         <metadata:MetadataProvider id="MetadataSP1" xsi:type="FileBackedHTTPMetadataProvider" 
                         xmlns="urn:mace:shibboleth:2.0:metadata"
-                        metadataURL="http://10.0.150.96:9000/public/metadataSP1.xml"
+                        metadataURL="http://[your APP URL]/public/metadataSP1.xml"
                         backingFile="[PATH_TO_IdP_DIR]/shib-idp/metadata/metadataSP1.xml" />
 
 4. Configure attributes
@@ -109,13 +110,6 @@ In what follows, the values between "[" and "]" must be configured as per your e
                 friendlyName="homePhone" />
         </resolver:AttributeDefinition>
     
-    Make sure the transientId attribute is persistent (it is configured as transient by default):
-    
-        <resolver:AttributeDefinition id="transientId" xsi:type="ad:TransientId">
-            <resolver:AttributeEncoder xsi:type="enc:SAML1StringNameIdentifier" nameFormat="urn:mace:shibboleth:1.0:nameIdentifier"/>
-            <resolver:AttributeEncoder xsi:type="enc:SAML2StringNameID" nameFormat="urn:oasis:names:tc:SAML:2.0:nameid-format:persistent"/>
-        </resolver:AttributeDefinition>
-
     Finally you need to make the attributes visible. Edit conf/attribute-filter.xml:
 
         <afp:AttributeFilterPolicy id="releaseTransientIdToAnyone">
@@ -137,6 +131,15 @@ In what follows, the values between "[" and "]" must be configured as per your e
             </afp:AttributeRule>
         </afp:AttributeFilterPolicy>
 
+Configure the Application
+-------------------------
+1. Edit the following constants to match your configuration. (If you use the sample metadata file you don't need to bother)
+
+        public static final String APP_ID        = "http://app.one.com/shibboleth";
+        public static final String APP_USER_NAME = "email";
+
+The APP_ID must match the entityID attribute from the metadata file.
+The APP_USER_NAME represents the attribute that the application is using to perform its own login.
     
 Issues and Notes
 -----------------
